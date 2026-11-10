@@ -1,0 +1,3 @@
+# Supabase database checks (staging only)
+
+Apply migrations `001` through `004` in order, then run `supabase/seed.sql`. Verify that anonymous users can select only active categories and products, can read product images, cannot upload to the public bucket, and cannot directly select or write `orders`/`order_items`. Create an order only through `create_public_order`; confirm its total is calculated from current product prices and its initial state is `awaiting_payment`. `track_public_order` should return limited item/status information only for the matching tracking code and checkout email. Incorrect email must return no order. Repeat after any SQL or policy change in a non-production project.
