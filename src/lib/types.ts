@@ -1,3 +1,3 @@
-export type { Category, CategorySlug } from "@/types/category";
-export type { Product } from "@/types/product";
-export type { CartLine, DeliveryDetails, LocalOrder } from "@/types/cart";
+export type { Category, CategorySlug, Subcategory } from "@/types/category";
+export type { Product, ProductAttributes, ProductImage, ProductVariant } from "@/types/product";
+export type { AddressInput, CartLine } from "@/types/cart";

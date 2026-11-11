@@ -1,19 +1,19 @@
-import { Heart, PackageCheck, ShieldCheck } from "lucide-react";
+import { Heart, Search, UserRound } from "lucide-react";
 
 export function Benefits() {
   return (
-    <section className="benefit-strip" aria-label="Store highlights">
+    <section className="benefit-strip" aria-label="Store features">
       <div>
-        <ShieldCheck size={18} />
-        <span>Browse at your own pace</span>
-      </div>
-      <div>
-        <PackageCheck size={18} />
-        <span>Simple delivery details</span>
+        <Search size={18} />
+        <span>Browse four clear departments</span>
       </div>
       <div>
         <Heart size={18} />
-        <span>Little finds, big joy</span>
+        <span>Save a wishlist on this device or account</span>
+      </div>
+      <div>
+        <UserRound size={18} />
+        <span>Manage addresses and account details</span>
       </div>
     </section>
   );

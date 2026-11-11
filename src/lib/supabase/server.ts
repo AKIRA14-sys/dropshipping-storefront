@@ -1,8 +1,9 @@
 import "server-only";
-import { getSupabaseClient } from "@/lib/supabase/client";
-export { isSupabaseConfigured } from "@/lib/supabase/client";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-// This intentionally uses only the public anon key. RLS/RPCs protect every server operation.
+// Public catalog reads only. Customer data stays behind browser sessions and RLS.
 export function getSupabaseServerClient() {
   return getSupabaseClient();
 }
+
+export { isSupabaseConfigured };

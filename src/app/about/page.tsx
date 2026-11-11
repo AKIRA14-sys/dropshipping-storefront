@@ -1,54 +1,51 @@
 import type { Metadata } from "next";
-import { Heart, Sparkles, Sprout } from "lucide-react";
+import { Heart, Layers3, Search } from "lucide-react";
+import { storeName } from "@/config/store";
 import { InfoPageCta } from "@/components/ui/InfoPageCta";
 
 export const metadata: Metadata = {
-  title: "About AKIRA STORE",
-  description: "Learn about the idea behind the AKIRA STORE demo storefront.",
+  title: "About",
+  description: "Learn about the four departments at our multi-category shop.",
 };
-
 export default function AboutPage() {
   return (
     <article className="section-wrap content-page">
-      <span className="eyebrow">A LITTLE HELLO FROM US</span>
+      <span className="eyebrow">A LITTLE HELLO FROM {storeName.toUpperCase()}</span>
       <h1>
-        Good finds.
+        Useful finds.
         <br />
-        <em>Good feeling.</em>
+        <em>One easy shop.</em>
       </h1>
       <p className="lead">
-        AKIRA STORE is being shaped as a thoughtful corner for useful, feel-good finds across beauty, fashion,
-        electronics and home.
+        {storeName} brings four everyday departments together: fashion, anime and collectibles, school
+        supplies, and home appliances.
       </p>
       <div className="content-card-grid">
         <div className="content-card">
           <span className="card-num">
-            <Sparkles size={16} />
+            <Layers3 size={17} />
           </span>
-          <h2>Everyday useful</h2>
-          <p>We want the things here to feel easy to browse and easy to imagine in your day.</p>
+          <h2>More to explore</h2>
+          <p>Move between four clear departments and find the product information you need in one place.</p>
         </div>
         <div className="content-card">
           <span className="card-num">
-            <Heart size={16} />
+            <Search size={17} />
           </span>
-          <h2>Picked with care</h2>
-          <p>Clear product details and honest information should come before a purchase.</p>
+          <h2>Details matter</h2>
+          <p>Listings are intended to show current product information, real options, and available stock.</p>
         </div>
         <div className="content-card">
           <span className="card-num">
-            <Sprout size={16} />
+            <Heart size={17} />
           </span>
-          <h2>Still growing</h2>
-          <p>
-            This storefront is a working demo. The final catalogue, supplier details and store policies still
-            need to be confirmed.
-          </p>
+          <h2>Keep your picks</h2>
+          <p>Browse without an account, save a wishlist, and manage account details when you sign in.</p>
         </div>
       </div>
       <p className="lead">
-        The best shops are built on trust. Before launch, every product listing, price, delivery promise and
-        contact channel will need to be checked and made specific to the real store.
+        The store name is a temporary placeholder until the owner confirms the final brand. The catalogue will
+        show products only when real inventory is connected and published.
       </p>
       <InfoPageCta />
     </article>

@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { AccountGate } from "@/components/auth/AuthForms";
 import { CheckoutForm } from "@/components/cart/CheckoutForm";
 
-export const metadata: Metadata = { title: "Delivery details", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Checkout", robots: { index: false, follow: false } };
 export default function CheckoutPage() {
   return (
     <section className="section-wrap checkout-page">
-      <span className="eyebrow">ONE LAST LITTLE DETAIL</span>
-      <h1>Where should it go?</h1>
-      <p>Share delivery details to create a demo order. No payment is collected.</p>
-      <CheckoutForm />
+      <span className="eyebrow">SECURE CHECKOUT</span>
+      <h1>Review your bag.</h1>
+      <p>Sign in is required before purchase; this store is not yet accepting orders.</p>
+      <AccountGate returnTo="/checkout">
+        <CheckoutForm />
+      </AccountGate>
     </section>
   );
 }

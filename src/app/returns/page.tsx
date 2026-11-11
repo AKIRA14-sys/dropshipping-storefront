@@ -1,31 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
 export const metadata: Metadata = {
-  title: "Returns & refunds",
-  description: "Draft returns information for the AKIRA STORE demo.",
+  title: "Returns and refunds",
+  description: "Current return and refund policy status.",
 };
 export default function ReturnsPage() {
   return (
     <article className="section-wrap content-page">
-      <span className="eyebrow">A FAIR WAY TO MAKE IT RIGHT</span>
+      <span className="eyebrow">RETURNS & REFUNDS</span>
       <h1>Returns & refunds.</h1>
-      <p className="lead">A live returns and refund policy has not been configured yet.</p>
+      <p className="lead">A complete returns and refunds policy has not been published by the store owner.</p>
       <div className="content-callout">
-        <strong>This page is not a live policy.</strong> Replace it with reviewed terms that match applicable
-        consumer rules, your supplier agreements, product types and real refund process before taking orders.
+        <strong>Orders are not currently being accepted.</strong> No purchase or refund request can be started
+        from this site yet.
       </div>
       <section className="policy-section">
-        <h2>What the store owner still needs to decide</h2>
+        <h2>What will be explained before launch</h2>
         <p>
-          Set the return window, item condition requirements, exclusions, return shipping responsibility,
-          faulty-item process, exchange options and refund method. Explain how a customer should reach support
-          using verified contact details.
+          The final policy needs to describe return eligibility and time limits, product-condition
+          requirements, faulty or incorrect items, return shipping, exchanges, refund method and how to
+          contact support. Terms will be published after the owner confirms them for the markets served.
         </p>
       </section>
-      <Link href="/policies" className="text-link">
-        See all policy notes
-      </Link>
+      <p>
+        For verified store contact details, see <Link href="/contact">Contact</Link>.
+      </p>
     </article>
   );
 }

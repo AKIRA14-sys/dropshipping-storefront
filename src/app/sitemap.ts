@@ -1,26 +1,26 @@
 import type { MetadataRoute } from "next";
+import { canIndexSite } from "@/config/store";
+import { STORE_CATEGORIES } from "@/data/categories";
 import { getSiteUrl } from "@/lib/supabase/client";
 import { getProducts } from "@/lib/products";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  if (process.env.NEXT_PUBLIC_INDEXING_ENABLED !== "true") return [];
+  if (!canIndexSite()) return [];
   const base = getSiteUrl();
   const products = await getProducts();
   const staticPaths = [
     "",
     "/shop",
+    "/new-arrivals",
+    "/offers",
     "/about",
     "/contact",
     "/faq",
-    "/policies",
     "/shipping",
     "/returns",
     "/privacy",
     "/terms",
-    "/categories/beauty",
-    "/categories/fashion",
-    "/categories/electronics",
-    "/categories/home-living",
+    ...STORE_CATEGORIES.map((category) => `/categories/${category.slug}`),
   ];
   return [
     ...staticPaths.map((path) => ({
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...products.map((product) => ({
       url: `${base}/products/${product.slug}`,
-      lastModified: new Date(),
+      lastModified: new Date(product.created_at),
       changeFrequency: "weekly" as const,
       priority: 0.6,
     })),

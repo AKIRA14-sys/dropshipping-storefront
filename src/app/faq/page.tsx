@@ -3,32 +3,36 @@ import { InfoPageCta } from "@/components/ui/InfoPageCta";
 
 export const metadata: Metadata = {
   title: "FAQs",
-  description: "Answers about the AKIRA STORE demo catalogue, checkout and order tracking.",
+  description: "Answers about browsing, accounts, checkout and delivery information.",
 };
 const faqs = [
   [
-    "Are these real products and prices?",
-    "No. This version uses clearly labelled demo catalogue entries and illustrative naira prices. Confirm every product, image, specification, price and supplier before launch.",
+    "Are products available to browse?",
+    "Only products the store owner publishes to the connected live catalog appear. If the catalog is not connected or has no published listings, the shop shows an honest empty/setup state instead of sample items.",
   ],
   [
-    "Can I place a real order here?",
-    "Not yet. The delivery-information flow is built, but this phase has no payment gateway and is not accepting paid orders. If Supabase is configured, a submitted demo order is saved with an awaiting-payment status; without Supabase, the demo is stored only in this browser.",
+    "Can I place a real order?",
+    "Not yet. Checkout is paused while payment and order handling are prepared. No order is created, no delivery details are collected, and no payment is taken.",
   ],
   [
-    "Will checkout charge my card?",
-    "No. There are no card fields and no payment provider connected. No payment is taken.",
+    "Do I need an account to browse or save a bag?",
+    "No. You can browse the catalog, use your device's shopping bag and save a wishlist without signing in. Sign-in is required before checkout can be opened.",
   ],
   [
-    "How are delivery fees and timing decided?",
-    "They are not configured yet. Delivery cost, coverage and timing need to be confirmed by the store owner before publishing purchase promises.",
+    "How do I create an account?",
+    "Enter your name and email, request the six-digit email code, verify it, and then create a password. Ordinary sign-in uses your email and password; remember-me controls the session on this device.",
+  ],
+  [
+    "Where are shipping costs and delivery times shown?",
+    "Delivery coverage, delivery fees, dispatch timing and returns terms have not been confirmed by the store. No delivery estimate or charge is currently promised.",
   ],
   [
     "How can I track an order?",
-    "Use the Track an order page with the tracking code and email used at checkout. Demo-only orders can be looked up only in the same browser where they were placed.",
+    "When real orders are enabled, signed-in customers will see their own order and fulfilment updates under Account → Order history. Public order lookup is not available.",
   ],
   [
-    "Why does the product photo not exactly match the listing?",
-    "The included images are illustrative starter assets supplied for this build. They are not verified product photos. Replace them with accurate, licensed supplier or store photography before selling.",
+    "How are prices and product availability checked?",
+    "Saved bag and wishlist items are refreshed against the active catalog before current prices and stock are shown. If the catalog cannot be verified, saved prices are hidden rather than presented as current.",
   ],
 ];
 export default function FaqPage() {
@@ -36,7 +40,7 @@ export default function FaqPage() {
     <article className="section-wrap content-page">
       <span className="eyebrow">A FEW THINGS YOU MIGHT WONDER</span>
       <h1>Good to know.</h1>
-      <p className="lead">Straightforward answers about this storefront demo.</p>
+      <p className="lead">Straight answers about browsing and the current store setup.</p>
       <div className="faq-list">
         {faqs.map(([question, answer]) => (
           <section className="faq-item" key={question}>

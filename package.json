@@ -2,14 +2,14 @@
   "name": "dropshipping-storefront",
   "version": "0.1.0",
   "private": true,
-  "description": "Mobile-first AKIRA STORE customer storefront built with Next.js and Supabase-ready data access.",
+  "description": "Mobile-first, multi-category customer storefront with Next.js and Supabase integration foundations.",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"README.md\" \"docs/**/*.md\" \"tests/**/*.md\" \"*.{json,ts,mjs}\" \".github/**/*.yml\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"README.md\" \"docs/**/*.md\" \"tests/**/*.md\" \"*.{json,ts,mjs}\" \".github/**/*.yml\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"README.md\" \"docs/**/*.md\" \"tests/**/*.md\" \"*.{json,ts,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"README.md\" \"docs/**/*.md\" \"tests/**/*.md\" \"*.{json,ts,mjs}\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

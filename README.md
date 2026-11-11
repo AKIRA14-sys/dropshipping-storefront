@@ -1,36 +1,39 @@
-# AKIRA STORE — customer storefront
+# Your Store — multi-category storefront
 
-A mobile-first Next.js storefront for a four-category demo catalogue, search and filters, product pages, a browser-persistent shopping bag, delivery-information checkout, and customer order tracking. The code is organized around the folder layout requested for this repository.
+A mobile-first Next.js storefront for **Fashion**, **Anime & Collectibles**, **School Supplies**, and **Home Appliances**. “Your Store” is a temporary brand name; change it with `NEXT_PUBLIC_STORE_NAME` after the owner confirms the final identity.
 
-> **Current state:** The source is prepared for Vercel and Supabase, but neither service has been connected or tested. Product names, sample ₦ prices and images are illustrative starter content. This phase has no payment gateway, admin dashboard, Android app or supplier automation. Checkout takes no payment. Supabase-backed orders begin with `awaiting_payment`; that is not an accepted or paid order. Until Supabase is configured, orders stay only in the browser that placed them.
+## Current status
 
-## Repository layout
+The customer-facing source is built, but the live Supabase and Vercel projects have not been connected from this workspace. The catalog contains no sample products: it displays only owner-published database listings and otherwise shows a clear setup or empty state. The included seed creates the four approved departments and their subcategories only.
+
+Customers can browse without signing in, save a device-based bag and wishlist, or—after Supabase Auth is configured—create an account with a six-digit email verification code and password. Saved account data is protected by row-level security. **Checkout is intentionally closed:** this repository has no payment gateway or order-submission flow, does not collect checkout delivery details, and cannot accept or confirm an order. Newsletter sign-up is not shown until a real email service is configured. There is no store-admin dashboard yet.
+
+The supplied category artwork is original vector illustration, not a product listing. Product photos, prices, options, stock, supplier details, promotions, shipping terms, returns, customer-support contact and the final brand must be supplied and verified by the store owner.
+
+## Project structure
 
 ```text
-public/                    Starter images, logo, SVG favicon and icons
-src/app/                   Pages, route handlers, metadata, CSS, sitemap and robots
-src/components/layout/      Header, navigation, mobile menu, footer and demo notice
-src/components/home/        Hero, categories, benefits, featured products and promo band
-src/components/products/    Product cards, gallery, filters and grid
-src/components/cart/        Cart rows/summary, delivery checkout and order tracking
-src/components/ui/          Shared buttons, loader and informational callout
-src/context/                Cart context and browser persistence
-src/hooks/                  useCart and product filtering hooks
-src/lib/supabase/           Public client and server-only public-key wrapper
-src/lib/                    Product/category data access, SEO and formatting helpers
-src/types/                  Product, category, cart, delivery and order types
-src/data/                   Offline demo catalogue and categories
-supabase/migrations/        Numbered category, product, storage/RLS and order migrations
-supabase/seed.sql           Eight placeholder products and four starter categories
-tests/                      Component, phone-browser and database smoke-test notes
-.github/workflows/           Prepared CI workflow; pending GitHub permission
+public/                         Logos, favicon and original department illustrations
+src/app/                        Storefront, account, information and API routes
+src/components/layout/          Responsive header, search, navigation, logo and footer
+src/components/home/            Editorial home, department cards, collections and spotlight
+src/components/products/        Product cards, filters, gallery, wishlist and purchase panel
+src/components/cart/             Guest/account bag and paused checkout experience
+src/components/account/          Protected profile, addresses and private order history
+src/context/                     Auth, bag and wishlist state
+src/hooks/                       Cart and catalog-filter hooks
+src/lib/                         Live catalog queries, Supabase clients, SEO and pricing helpers
+src/types/                       Product, department and saved-address types
+src/data/                         Owner-approved department taxonomy only
+src/config/                       Replaceable store identity and optional public links
+supabase/migrations/             Six ordered schema/security migrations
+supabase/seed.sql                 Four departments and subcategories; no product rows
+public/categories/                Original vector department illustrations
 ```
 
-The robots endpoint is generated by `src/app/robots.ts` instead of a static `public/robots.txt`, so indexing remains safely opt-in until the real catalogue is ready.
+## Run and verify locally
 
-## Run locally
-
-Requires Node.js 20.9+ and npm.
+Requires Node.js 20.9 or later and npm.
 
 ```bash
 npm ci
@@ -38,48 +41,52 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The shop works offline in clearly labelled demo mode without Supabase values. Validate the source and production bundle with:
+The catalog stays empty until a Supabase project with real published product rows is configured. Before publishing changes, run:
 
 ```bash
+npm run format:check
 npm run typecheck
-npm run build
 npm audit
+npm run build
 ```
 
-The private GitHub repository is `AKIRA14-sys/dropshipping-storefront`. A workflow for `npm ci`, Prettier, TypeScript, dependency audit and production build has been prepared, but GitHub rejected its upload because the authorized integration lacks the `workflows` permission. CI is therefore not active on the repository yet; the commands above have all passed locally.
+These commands have been run in the cloud workspace; they do not prove that the remote Supabase/Vercel services are connected. This repository currently has no active GitHub Actions workflow, so the checks above should be run locally after source changes.
 
-## Supabase setup (phone-friendly)
+## Supabase setup
 
-1. In the Supabase dashboard, create or choose a project. Open **SQL Editor** and run the four files in `supabase/migrations/` in numerical order: `001_create_categories.sql`, `002_create_products.sql`, `003_setup_storage_and_policies.sql`, then `004_orders_and_public_rpc.sql`. Run `supabase/seed.sql` after them to add the four demo departments and eight illustrative demo products.
-2. In **Project Settings → API**, copy the Project URL and **anon/public** key. Never use or expose a `service_role` key.
-3. In Vercel’s project settings, add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The browser receives only this public key. Set them for Production and Preview, then redeploy.
-4. The seed refers to the included local starter images in `/public/images`. To replace an image, upload an approved photo to the `product-images` Storage bucket and update that product’s `image_url` to the public Storage URL. The bucket allows public reads but no public uploads.
-5. Replace or deactivate all demo rows with verified products, prices, stock, descriptions and images. Review ingredient/specification, safety, warranty, supplier and image-rights claims before any live use.
+1. Create or select the store’s Supabase project. In the SQL Editor, run every file in `supabase/migrations/` in numerical order, from `001_create_categories.sql` through `006_search_and_account_hardening.sql`. Then run `supabase/seed.sql` once. The seed inserts only the four department/category taxonomies—no products, inventory, promotions, reviews, orders or customer data.
+2. In **Project Settings → API**, copy the project URL and anon/publishable key. Add them as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) in the deployment environment. These are public client values; **never** put a service-role key in a `NEXT_PUBLIC_` variable, in this repository, or in the browser.
+3. In **Authentication → URL Configuration**, set the deployed site URL and add the production and preview URLs that you actually use. Enable email/OTP sign-in and configure the email template to deliver a six-digit verification token. Test registration, password creation, sign-in, recovery, sign-out, cart/wishlist sync and address isolation with test accounts.
+4. Add products only when the owner has accurate listings, current prices/currency, available stock, variants/options, department/subcategory, product attributes, licensed images and verified descriptions. Upload actual product photos to the `product-images` bucket using the Supabase dashboard; the public policy is read-only for shoppers. Set `featured` and `is_new_arrival` only for items the store owner has deliberately selected. Create promotions only when their dates, details and destination are real.
+5. Test public catalog reads and account-owned data using separate test accounts. Orders and order items are readable only by their authenticated owner; customer profiles, addresses, carts and wishlists have RLS. Default-address updates use an ownership-checked database function. The public order-creation and email/tracking lookup functions from the original schema are revoked and removed.
 
-The database allows public read access only to active categories/products. Orders and order items have RLS enabled and no direct anon table access. Checkout and tracking use narrowly scoped database functions; the database calculates prices and tracking lookup requires both the code and checkout email. The public order function can still be abused by bots, so add suitable anti-abuse/rate protections before real orders. Do not use real customer data until privacy, retention, access and deletion procedures are set.
+### Important: orders and payments
 
-## Vercel setup and automatic deployment
+The order API responds with `410 Gone`; the checkout UI is informational and cannot create an order. There is no payment provider, payment verification, webhooks, fulfillment automation, admin inventory tool or live order-confirmation email. Do not open checkout or represent a manual database row as a paid order. A later payment/order implementation needs a separate security-reviewed server-side flow that confirms provider status before marking an order paid.
 
-Vercel has **not** been connected or tested for this repo. From a phone browser:
+## Vercel deployment
 
-1. Sign in to Vercel, choose **Add New → Project → Import Git Repository**, and select `AKIRA14-sys/dropshipping-storefront`. If asked, authorize Vercel to read this repository.
+The GitHub repository is public at [AKIRA14-sys/dropshipping-storefront](https://github.com/AKIRA14-sys/dropshipping-storefront). To deploy it from a phone browser:
+
+1. In Vercel, choose **Add New → Project → Import Git Repository** and select `AKIRA14-sys/dropshipping-storefront`.
 2. Keep the detected framework as **Next.js**, root directory `./`, and production branch `main`.
-3. Add `NEXT_PUBLIC_SITE_URL` with the intended production URL. Keep `NEXT_PUBLIC_STORE_LIVE=false` and `NEXT_PUBLIC_INDEXING_ENABLED=false` until real content, contact details, delivery, payment and policies have been checked.
-4. Deploy. Verify the deployed home page, categories, product page, `robots.txt`, `sitemap.xml`, cart and demo checkout. The app is not a paid-order service yet.
-5. After the Supabase migration and seed are applied, add the Supabase URL and anon key as Vercel environment variables and redeploy. Test browse/order/tracking on a non-production project before moving any real traffic.
-6. Only after replacing demo content and completing launch checks should you set `NEXT_PUBLIC_STORE_LIVE=true` and `NEXT_PUBLIC_INDEXING_ENABLED=true`; add `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` if you verify the site in Google Search Console, then redeploy. `robots.txt` and `sitemap.xml` update with the indexing flag.
-7. Confirm `main` is Vercel’s production branch and a small test commit in GitHub triggers a deployment. Until that test succeeds, automatic deployment is not verified.
+3. Add the public environment values from `.env.example`. Set the final store name, currency, verified support email and any real HTTPS social-profile URLs only after the owner confirms them. Add a real `NEXT_PUBLIC_SITE_URL` for the deployed site.
+4. Deploy and check the home, category, search, product, account, bag, shipping, privacy and mobile-navigation routes. Confirm catalog errors fail closed and that checkout remains closed.
+5. Keep `NEXT_PUBLIC_INDEXING_ENABLED=false` until the real catalog and policies are reviewed. To opt into indexing later, set it to `true` only with the real HTTPS site URL. The code rejects placeholder `.example`/`.invalid` domains. Add Google verification only if the owner completes Search Console verification.
 
-The included `vercel.json` sets the install/build commands. Connecting the Vercel account is a separate dashboard action, not performed here.
+This workspace has not linked a Vercel project or deployed a public website. Connecting services and deployment remains an owner-controlled account action.
 
-## Android-friendly source management
+## Brand and optional public links
 
-Use GitHub’s Android app or mobile website to browse/edit code and commit changes. Vercel’s mobile dashboard can manage deployment/environment settings; Supabase’s dashboard can run the SQL files and edit catalogue rows. The normal code and copy updates are text-based. Use the GitHub web upload or Supabase Storage dashboard to replace binary photos.
+- Replace the temporary label through `NEXT_PUBLIC_STORE_NAME`.
+- The reusable `StoreLogo` component selects dark or light styling; `/public/logo-icon.svg` and `/public/favicon.svg` provide the icon mark. The matching horizontal SVG assets are in `public/`.
+- Set `NEXT_PUBLIC_STORE_CURRENCY` to the store’s ISO currency code. Product prices use each listing’s stored currency code.
+- Set `NEXT_PUBLIC_SUPPORT_EMAIL` only to an inbox the owner controls. The Contact and Privacy pages do not collect form submissions.
+- `NEXT_PUBLIC_INSTAGRAM_URL`, `NEXT_PUBLIC_TIKTOK_URL` and `NEXT_PUBLIC_FACEBOOK_URL` accept only HTTPS URLs; no social link appears until a real profile is provided.
+- Newsletter sign-up and customer reviews are intentionally omitted until their services, data policies and moderation process exist.
 
-## Before launch
+## Android-friendly editing
 
-Replace placeholder products/prices/photos; add a real payment gateway in a later approved phase; configure verified support contact, delivery coverage/fees/timing, returns/refunds, privacy/retention terms and product-safety/warranty claims. Review applicable legal requirements. Test a staging order and tracking flow, add abuse controls, connect Vercel, and verify the first automatic deployment. No `awaiting_payment` order should be treated as paid or confirmed.
+The repository is the permanent source of truth. Use the GitHub Android app or mobile website to browse/edit TypeScript, CSS, SVG, SQL and Markdown files. The normal text changes need no desktop software. Add binary product photography with Supabase Storage; do not commit service credentials or private customer data.
 
-## Assets and permissions
-
-The four image files supplied for this build are included as illustrative starter assets. Their commercial-use rights and product accuracy have not been verified; replace them with imagery the store is authorized to publish before launch. No project license has been chosen on the owner’s behalf.
+See [`docs/launch-checklist.md`](docs/launch-checklist.md) and `tests/` for the remaining owner checks. No license has been selected on the owner’s behalf.

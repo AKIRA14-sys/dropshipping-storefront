@@ -1,31 +1,40 @@
 import type { Metadata } from "next";
+import { Mail } from "lucide-react";
 import { InfoPageCta } from "@/components/ui/InfoPageCta";
+import { supportEmail } from "@/config/store";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact information for the AKIRA STORE demo storefront.",
+  description: "Contact the store using its published support address.",
 };
-
 export default function ContactPage() {
   return (
     <article className="section-wrap content-page">
-      <span className="eyebrow">WE’RE HERE TO HELP</span>
+      <span className="eyebrow">CUSTOMER SUPPORT</span>
       <h1>Let’s talk.</h1>
       <p className="lead">
-        A helpful contact page is part of a good shopping experience. The real store email, WhatsApp number
-        and support hours have not been configured yet, so we’re not publishing placeholder contact details.
+        For store questions, use the support contact shown here. No message form is presented unless a real
+        contact channel is configured.
       </p>
-      <div className="content-callout">
-        <strong>Contact is not connected in this demo.</strong> No customer message form is active and no
-        messages are collected here. Add a verified support inbox or WhatsApp channel before the storefront is
-        opened to shoppers.
-      </div>
-      <h2 className="policy-section">For the store owner</h2>
-      <p>
-        In the repository, update this page with a support email or a WhatsApp link that you control. If you
-        add a form, connect it to a trusted inbox and publish a privacy notice explaining how messages are
-        handled.
-      </p>
+      {supportEmail ? (
+        <div className="contact-card">
+          <span className="contact-icon">
+            <Mail size={20} />
+          </span>
+          <div>
+            <strong>Email the store</strong>
+            <p>For help with catalog information or your account, write to the store support inbox.</p>
+            <a className="button button-dark" href={`mailto:${supportEmail}`}>
+              {supportEmail}
+            </a>
+          </div>
+        </div>
+      ) : (
+        <div className="content-callout">
+          <strong>Customer support email has not been set up.</strong> Please do not submit personal details
+          here. The store owner must configure a support address before opening the shop to customers.
+        </div>
+      )}
       <InfoPageCta />
     </article>
   );
