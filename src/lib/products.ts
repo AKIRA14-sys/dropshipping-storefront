@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { getStaticCategory, isCategorySlug } from "@/data/categories";
+import { isCategorySlug } from "@/data/categories";
 import type { Product, ProductImage, ProductVariant } from "@/types/product";
 
 export type CatalogState = "not-configured" | "unavailable" | "empty" | "ready";
@@ -10,7 +10,7 @@ export interface CatalogResult {
 }
 
 const PRODUCT_SELECT =
-  "id, category_id, subcategory_id, slug, name, description, brand, price_ngn, compare_at_price_ngn, currency_code, image_url, stock_quantity, featured, is_new_arrival, active, attributes, search_terms, created_at, categories!inner(slug,name), subcategories(slug,name), product_images(id,image_url,alt_text,sort_order), product_variants(id,label,sku,options,price_ngn,stock_quantity,active)";
+  "id, category_id, subcategory_id, slug, name, description, brand, price_ngn, compare_at_price_ngn, currency_code, image_url, stock_quantity, featured, is_new_arrival, active, attributes, search_terms, created_at, categories!inner(slug,name,active), subcategories(slug,name,active), product_images(id,image_url,alt_text,sort_order), product_variants(id,label,sku,options,price_ngn,stock_quantity,active)";
 
 function firstRelation<T>(value: T | T[] | null | undefined): T | undefined {
   return Array.isArray(value) ? value[0] : (value ?? undefined);
@@ -18,8 +18,13 @@ function firstRelation<T>(value: T | T[] | null | undefined): T | undefined {
 
 export function mapProduct(row: Record<string, any>): Product | null {
   const category = firstRelation(row.categories);
-  if (!category || !isCategorySlug(category.slug)) return null;
-  const staticCategory = getStaticCategory(category.slug);
+  if (
+    !category ||
+    category.active !== true ||
+    typeof category.slug !== "string" ||
+    !isCategorySlug(category.slug)
+  )
+    return null;
   const rawImages = Array.isArray(row.product_images) ? row.product_images : [];
   const images: ProductImage[] = rawImages
     .filter((image: any) => typeof image.image_url === "string" && image.image_url.length > 0)
@@ -39,7 +44,8 @@ export function mapProduct(row: Record<string, any>): Product | null {
     sort_order: 0,
   };
   const displayImages = [primaryImage, ...images.filter((image) => image.image_url !== imageUrl)];
-  const subcategory = firstRelation(row.subcategories);
+  const rawSubcategory = firstRelation(row.subcategories);
+  const subcategory = rawSubcategory?.active === true ? rawSubcategory : undefined;
   const variants: ProductVariant[] = (Array.isArray(row.product_variants) ? row.product_variants : [])
     .filter((variant: any) => variant.active === true)
     .map((variant: any) => ({
@@ -65,7 +71,7 @@ export function mapProduct(row: Record<string, any>): Product | null {
     currency_code: String(row.currency_code || "NGN").toUpperCase(),
     category_id: String(row.category_id),
     category_slug: category.slug,
-    category_name: category.name || staticCategory?.name || "",
+    category_name: category.name || "",
     subcategory_id: row.subcategory_id ? String(row.subcategory_id) : null,
     subcategory_slug: subcategory?.slug ?? null,
     subcategory_name: subcategory?.name ?? null,

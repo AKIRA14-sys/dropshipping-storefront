@@ -235,7 +235,7 @@ export function ShopBrowser({
               setSubcategory("");
             }}
           >
-            All departments <span>{products.length}</span>
+            All departments <span>{catalogState === "ready" ? products.length : "—"}</span>
           </button>
           {categories.map((item) => (
             <button
@@ -248,7 +248,11 @@ export function ShopBrowser({
               }}
             >
               {item.name}
-              <span>{products.filter((product) => product.category_slug === item.slug).length}</span>
+              <span>
+                {catalogState === "ready"
+                  ? products.filter((product) => product.category_slug === item.slug).length
+                  : "—"}
+              </span>
             </button>
           ))}
         </div>

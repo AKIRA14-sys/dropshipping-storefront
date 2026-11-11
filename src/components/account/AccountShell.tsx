@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowRight, Heart, MapPin, Package, UserRound } from "lucide-react";
+import { ArrowRight, MapPin, Package, UserRound } from "lucide-react";
 import { AccountGate } from "@/components/auth/AuthForms";
 import { useAuth } from "@/context/AuthContext";
 
@@ -11,7 +11,6 @@ const links = [
   { href: "/account", label: "Overview", icon: UserRound },
   { href: "/account/orders", label: "Order history", icon: Package },
   { href: "/account/addresses", label: "Saved addresses", icon: MapPin },
-  { href: "/wishlist", label: "Wishlist", icon: Heart },
 ];
 
 export function AccountShell({
@@ -44,9 +43,19 @@ export function AccountShell({
   return (
     <section className="section-wrap account-page">
       <div className="account-heading">
-        <span className="eyebrow">YOUR ACCOUNT</span>
-        <h1>Welcome{user?.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : " back"}.</h1>
-        <p>{user?.email}</p>
+        <span className="eyebrow">ME & MY ACCOUNT</span>
+        <div className="account-profile-heading">
+          <span className="account-avatar" aria-hidden="true">
+            {String(user?.user_metadata?.full_name || user?.email || "M")
+              .trim()
+              .charAt(0)
+              .toUpperCase()}
+          </span>
+          <div>
+            <h1>{user?.user_metadata?.full_name || "Your account"}</h1>
+            <p>{user?.email}</p>
+          </div>
+        </div>
       </div>
       <AccountGate returnTo={path}>
         <div className="account-layout">

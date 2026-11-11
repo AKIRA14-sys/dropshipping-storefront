@@ -1,15 +1,18 @@
 import type { MetadataRoute } from "next";
 import { canIndexSite } from "@/config/store";
-import { STORE_CATEGORIES } from "@/data/categories";
 import { getSiteUrl } from "@/lib/supabase/client";
+import { getCategories } from "@/lib/categories";
 import { getProducts } from "@/lib/products";
+
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!canIndexSite()) return [];
   const base = getSiteUrl();
-  const products = await getProducts();
+  const [products, categories] = await Promise.all([getProducts(), getCategories()]);
   const staticPaths = [
     "",
+    "/explore",
     "/shop",
     "/new-arrivals",
     "/offers",
@@ -20,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/returns",
     "/privacy",
     "/terms",
-    ...STORE_CATEGORIES.map((category) => `/categories/${category.slug}`),
+    ...categories.map((category) => `/categories/${category.slug}`),
   ];
   return [
     ...staticPaths.map((path) => ({

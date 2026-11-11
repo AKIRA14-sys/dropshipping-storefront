@@ -2,14 +2,14 @@
 
 Run these checks only against a separate Supabase test project containing owner-created test catalog records. Do not use customer data or create sample production inventory.
 
-1. At a phone viewport, check that the homepage, four approved departments, product search and category navigation have no horizontal overflow. With Supabase unconfigured, verify that the customer sees a clear setup/empty state rather than products.
-2. In the configured test project, browse active products and confirm each image, price, currency, variant and stock status matches its current database record. Verify that search, supported attribute filters, availability, real sale labels and popularity sorting only use the corresponding live data.
-3. While signed out, add available products to the bag, change quantities, remove an item and reload. Confirm the guest bag persists in that browser and does not require an account.
-4. Add items to a guest wishlist, sign in, and verify it merges without duplicate products. Add items to the bag before signing in, then verify the guest and account bags merge once; revisit on a second signed-in browser to verify account persistence.
-5. Test registration with a six-digit email OTP followed by password creation, ordinary email/password sign-in, Remember me both on and off, password reset, and explicit logout. Confirm each account's profile, addresses, bag, wishlist and orders remain private to that account.
-6. Confirm account order history and order details use only signed-in records. Test `/track` as signed out and signed in; it must not expose an unauthenticated order lookup.
-7. Confirm checkout requires sign-in and clearly states that ordering and payment are not enabled. The checkout API must reject attempts to create an order and must never display a fake order confirmation.
-8. Check keyboard focus, Escape behavior for the mobile menu and image lightbox, visible focus styles, screen-reader labels, and reduced-motion settings.
-9. Verify that search, cart, checkout, account, order and tracking routes are excluded from indexing; public indexing remains disabled until an owner configures a real HTTPS domain and opts in.
+1. At phone and desktop widths, check the NEXTVO home, Explore, all 14 departments, product search, department drawer and four primary destinations. Confirm no horizontal overflow and that desktop/mobile navigation remains keyboard- and touch-accessible.
+2. With Supabase unconfigured, verify the customer sees the unconnected-catalog state, categories remain browseable, and no sample products, prices, reviews, stock or sales figures appear. When the database has no products, cards should clearly report that listings are not yet published.
+3. In the configured test project, browse active products and confirm each image, price, currency, variant and stock status matches its current database record. Verify typeahead, search, category/subcategory filters, supported attributes, availability, real sale labels and paid-sales popularity sorting.
+4. While signed out, add available products to the cart and wishlist, change quantities, remove items and reload. Confirm guest saves persist on the device. Sign in and verify saved items merge once; use a second signed-in account/browser to confirm no private cart or wishlist crosses accounts.
+5. Test registration with a six-digit email OTP followed by password creation, ordinary email/password sign-in, Remember me both on and off, password reset, explicit logout, profile updates and saved-address defaults.
+6. Confirm private account order history/details are constrained to the signed-in owner. `/track` must not expose an unauthenticated order lookup.
+7. Open checkout as a guest and signed-in user. It must say checkout is paused, collect no delivery details, create no order and take no payment. The order API must reject attempts to create an order; no fake confirmation is shown.
+8. Check accessible labels, visible keyboard focus, Escape and focus restoration for the department drawer, image gallery controls, reduced-motion settings, screen-reader announcements and safe-area behavior on a phone.
+9. Verify search, cart, checkout, account, orders and tracking routes are excluded from indexing. Public indexing remains disabled until the owner configures a real HTTPS domain and explicitly opts in.
 
-Payment, delivery rates, email delivery and live supplier fulfilment require separately configured services and must not be treated as passed by these storefront checks.
+Payment, delivery rates, email delivery and live supplier fulfilment require separately configured services; storefront smoke checks do not prove those services work.

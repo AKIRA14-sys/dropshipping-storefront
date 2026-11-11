@@ -3,21 +3,20 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Search, ArrowUpRight, Clock3, X } from "lucide-react";
-import { STORE_CATEGORIES } from "@/data/categories";
+import { Search, ArrowUpRight, Clock3, X, Layers3 } from "lucide-react";
 
 interface Suggestion {
   label: string;
   subline: string;
   href: string;
-  kind: "product" | "category" | "recent";
+  kind: "product" | "category" | "subcategory" | "recent";
 }
 const RECENT_KEY = "storefront.recent-searches.v1";
 
 export function HeaderSearch() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [products, setProducts] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -36,7 +35,7 @@ export function HeaderSearch() {
 
   useEffect(() => {
     if (search.length < 2) {
-      setProducts([]);
+      setSuggestions([]);
       return;
     }
     const controller = new AbortController();
@@ -46,9 +45,9 @@ export function HeaderSearch() {
           signal: controller.signal,
         });
         const payload = (await response.json()) as { suggestions?: Suggestion[] };
-        setProducts(Array.isArray(payload.suggestions) ? payload.suggestions : []);
+        setSuggestions(Array.isArray(payload.suggestions) ? payload.suggestions : []);
       } catch {
-        if (!controller.signal.aborted) setProducts([]);
+        if (!controller.signal.aborted) setSuggestions([]);
       }
     }, 220);
     return () => {
@@ -57,24 +56,9 @@ export function HeaderSearch() {
     };
   }, [search]);
 
-  const categorySuggestions =
-    search.length >= 2
-      ? STORE_CATEGORIES.filter((category) =>
-          `${category.name} ${category.description} ${category.subcategories.map((item) => item.name).join(" ")}`
-            .toLowerCase()
-            .includes(search.toLowerCase()),
-        )
-          .slice(0, 4)
-          .map((category) => ({
-            label: category.name,
-            subline: "Department",
-            href: `/categories/${category.slug}`,
-            kind: "category" as const,
-          }))
-      : [];
   const visible =
     search.length >= 2
-      ? [...products, ...categorySuggestions].slice(0, 8)
+      ? suggestions.slice(0, 8)
       : recent.map((term) => ({
           label: term,
           subline: "Recent search",
@@ -118,8 +102,8 @@ export function HeaderSearch() {
         name="q"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search products, brands or keywords"
-        aria-label="Search products, brands or keywords"
+        placeholder="Search products, departments or brands"
+        aria-label="Search products, departments or brands"
         aria-autocomplete="list"
         aria-expanded={open && visible.length > 0}
         aria-controls="search-suggestions"
@@ -167,7 +151,13 @@ export function HeaderSearch() {
               }}
             >
               <span className="search-suggestion-icon">
-                {item.kind === "recent" ? <Clock3 size={16} /> : <Search size={16} />}
+                {item.kind === "recent" ? (
+                  <Clock3 size={16} />
+                ) : item.kind === "category" || item.kind === "subcategory" ? (
+                  <Layers3 size={16} />
+                ) : (
+                  <Search size={16} />
+                )}
               </span>
               <span>
                 <strong>{item.label}</strong>

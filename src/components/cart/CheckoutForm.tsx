@@ -29,7 +29,7 @@ export function CheckoutForm() {
       <div className="checkout-paused">
         <h2>Your bag is empty.</h2>
         <p>Browse the catalog and save products to your bag. No order has been placed.</p>
-        <Link href="/shop" className="button button-dark">
+        <Link href="/explore" className="button button-dark">
           Browse the catalog
         </Link>
       </div>

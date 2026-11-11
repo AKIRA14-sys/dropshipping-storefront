@@ -1,4 +1,4 @@
-export const storeName = process.env.NEXT_PUBLIC_STORE_NAME?.trim() || "Your Store";
+export const storeName = process.env.NEXT_PUBLIC_STORE_NAME?.trim() || "NEXTVO";
 export const storeCurrency = process.env.NEXT_PUBLIC_STORE_CURRENCY?.trim() || "NGN";
 export const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "";
 
@@ -18,7 +18,7 @@ export const socialLinks = [
 ].filter((item): item is { label: string; href: string } => Boolean(item.href));
 
 export const storeDescription =
-  "A multi-category shop for fashion, anime and collectibles, school supplies, and home appliances.";
+  "Explore phones, tech, fashion, beauty, home, gaming and more at NEXTVO. Browse current published listings and save your finds.";
 
 export function canIndexSite(): boolean {
   if (process.env.NEXT_PUBLIC_INDEXING_ENABLED !== "true") return false;

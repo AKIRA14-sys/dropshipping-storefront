@@ -1,53 +1,50 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import type { Product } from "@/types/product";
+import type { CatalogState } from "@/lib/products";
+import { ProductGrid } from "@/components/products/ProductGrid";
+import { CatalogEmptyState } from "@/components/products/CatalogEmptyState";
 
-export function Hero() {
+export function Hero({
+  products,
+  catalogState,
+  spotlightLabel,
+}: {
+  products: Product[];
+  catalogState: CatalogState;
+  spotlightLabel: string;
+}) {
   return (
-    <section className="hero section-wrap">
-      <div className="hero-copy">
-        <span className="eyebrow">FOUR DEPARTMENTS · ONE EASY SHOP</span>
-        <h1>
-          Good finds for <em>everyday life.</em>
-        </h1>
-        <p>Explore fashion, anime and collectibles, school supplies, and home appliances—at your own pace.</p>
-        <div className="hero-actions">
-          <Link href="/shop" className="button button-dark">
-            Explore the shop <ArrowRight size={17} />
-          </Link>
-          <Link href="#departments" className="text-link">
-            Browse departments <ArrowUpRight size={15} />
-          </Link>
+    <section className="app-home-hero section-wrap" aria-labelledby="home-hero-title">
+      <div className="app-home-hero-heading">
+        <div>
+          <span className="eyebrow">
+            <Sparkles size={14} /> GOOD FINDS, LIVE AND CURRENT
+          </span>
+          <h1 id="home-hero-title">Find your next favourite.</h1>
+          <p>Explore the latest published finds across the shop.</p>
         </div>
-        <div className="hero-proof">
-          <span>Browse without an account</span>
-          <span>Save your picks for later</span>
-        </div>
+        <Link className="button button-dark" href="/explore">
+          Explore the shop <ArrowRight size={16} />
+        </Link>
       </div>
-      <div
-        className="hero-visual hero-visual-categories"
-        aria-label="Illustrations representing the store departments"
-      >
-        <div className="hero-photo">
-          <Image
-            src="/categories/fashion.svg"
-            alt=""
-            fill
-            priority
-            sizes="(max-width: 760px) 100vw, 52vw"
-            className="hero-img"
-          />
+      <div className="home-spotlight-panel">
+        <div className="home-spotlight-heading">
+          <div>
+            <span className="eyebrow">{products.length ? spotlightLabel : "LIVE CATALOG"}</span>
+            <h2>{products.length ? "Worth a closer look" : "Product spotlights are on their way"}</h2>
+          </div>
+          {products.length > 0 && (
+            <span className="spotlight-live-indicator">
+              <i /> Published now
+            </span>
+          )}
         </div>
-        <div className="hero-art-card hero-art-anime">
-          <Image src="/categories/anime.svg" alt="" fill sizes="180px" />
-        </div>
-        <div className="hero-art-card hero-art-school">
-          <Image src="/categories/school-supplies.svg" alt="" fill sizes="180px" />
-        </div>
-        <div className="hero-caption">
-          <span>FASHION · COLLECTIBLES · SCHOOL · HOME</span>
-          <span>ILLUSTRATIONS, NOT PRODUCT PHOTOS</span>
-        </div>
+        {products.length ? (
+          <ProductGrid products={products.slice(0, 8)} className="spotlight-rail" />
+        ) : (
+          <CatalogEmptyState state={catalogState} compact />
+        )}
       </div>
     </section>
   );

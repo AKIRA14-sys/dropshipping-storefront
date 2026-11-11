@@ -172,7 +172,7 @@ export function AccountOverview() {
         <Link href="/account/addresses">
           <MapPin size={18} /> Saved addresses <ArrowRight size={15} />
         </Link>
-        <Link href="/wishlist">
+        <Link href="/cart?view=saved">
           <Heart size={18} /> Wishlist <ArrowRight size={15} />
         </Link>
       </div>

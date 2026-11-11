@@ -4,48 +4,58 @@ import { storeName } from "@/config/store";
 import { InfoPageCta } from "@/components/ui/InfoPageCta";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about the four departments at our multi-category shop.",
+  title: `About ${storeName}`,
+  description: `Learn about ${storeName}, a multi-category shopping experience.`,
 };
+
 export default function AboutPage() {
   return (
     <article className="section-wrap content-page">
-      <span className="eyebrow">A LITTLE HELLO FROM {storeName.toUpperCase()}</span>
+      <span className="eyebrow">A LITTLE HELLO FROM {storeName}</span>
       <h1>
-        Useful finds.
+        Find something new.
         <br />
-        <em>One easy shop.</em>
+        <em>Make it yours.</em>
       </h1>
       <p className="lead">
-        {storeName} brings four everyday departments together: fashion, anime and collectibles, school
-        supplies, and home appliances.
+        {storeName} brings a growing range of departments together in one place—from phones and computers to
+        fashion, beauty, home, sports, travel and more.
       </p>
       <div className="content-card-grid">
         <div className="content-card">
           <span className="card-num">
             <Layers3 size={17} />
           </span>
-          <h2>More to explore</h2>
-          <p>Move between four clear departments and find the product information you need in one place.</p>
+          <h2>Explore your way</h2>
+          <p>
+            Browse by department, search the catalog and narrow results using details published with each
+            item.
+          </p>
         </div>
         <div className="content-card">
           <span className="card-num">
             <Search size={17} />
           </span>
-          <h2>Details matter</h2>
-          <p>Listings are intended to show current product information, real options, and available stock.</p>
+          <h2>Current listings only</h2>
+          <p>
+            Product pages are shown only when the store has published an active listing with current
+            information.
+          </p>
         </div>
         <div className="content-card">
           <span className="card-num">
             <Heart size={17} />
           </span>
-          <h2>Keep your picks</h2>
-          <p>Browse without an account, save a wishlist, and manage account details when you sign in.</p>
+          <h2>Save your finds</h2>
+          <p>
+            Browse as a guest, keep a cart and wishlist on this device, or sign in to sync saved items to your
+            account.
+          </p>
         </div>
       </div>
       <p className="lead">
-        The store name is a temporary placeholder until the owner confirms the final brand. The catalogue will
-        show products only when real inventory is connected and published.
+        Checkout is currently paused. The store will show an order and payment flow only after verified
+        payment and order handling are connected.
       </p>
       <InfoPageCta />
     </article>

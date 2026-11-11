@@ -1,4 +1,4 @@
-export type CategorySlug = "fashion" | "anime" | "school-supplies" | "home-appliances";
+export type CategorySlug = string;
 
 export interface Subcategory {
   id?: string;
@@ -12,7 +12,10 @@ export interface Category {
   slug: CategorySlug;
   name: string;
   description: string;
-  image_url: string;
+  /** Category discovery artwork only; never a product listing image. */
+  image_url: string | null;
+  icon_key?: string;
   display_order: number;
   subcategories: Subcategory[];
+  product_count?: number;
 }

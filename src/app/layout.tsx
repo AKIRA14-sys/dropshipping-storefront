@@ -4,16 +4,20 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { SiteHeader } from "@/components/layout/Header";
 import { SiteFooter } from "@/components/layout/Footer";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { canIndexSite, storeDescription, storeName } from "@/config/store";
 import { getSiteUrl } from "@/lib/supabase/client";
+import { getCategories } from "@/lib/categories";
 import "./globals.css";
 
 const indexingEnabled = canIndexSite();
 const baseUrl = getSiteUrl();
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
-  title: { default: `${storeName} — Everyday finds`, template: `%s | ${storeName}` },
+  title: { default: `${storeName} — Find your next favourite`, template: `%s | ${storeName}` },
   description: storeDescription,
   applicationName: storeName,
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
@@ -24,15 +28,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: storeName,
-    title: `${storeName} — Everyday finds`,
+    title: `${storeName} — Find your next favourite`,
     description: storeDescription,
   },
   robots: { index: indexingEnabled, follow: indexingEnabled },
 };
 
-export const viewport: Viewport = { themeColor: "#f5f1e9", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#f4f6f2", width: "device-width", initialScale: 1 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const categories = await getCategories();
   return (
     <html lang="en">
       <body>
@@ -42,9 +47,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a className="skip-link" href="#main-content">
                 Skip to content
               </a>
-              <SiteHeader />
+              <SiteHeader categories={categories} />
               <main id="main-content">{children}</main>
               <SiteFooter />
+              <MobileBottomNav />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>

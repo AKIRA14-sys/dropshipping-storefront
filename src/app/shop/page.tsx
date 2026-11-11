@@ -4,7 +4,7 @@ import { getCategories } from "@/lib/categories";
 import { getBestSellers, getCatalog } from "@/lib/products";
 export const metadata: Metadata = {
   title: "Shop all",
-  description: "Browse published products across four departments.",
+  description: "Browse current published products across the NEXTVO store.",
 };
 type SearchParams = Promise<{ q?: string; category?: string; subcategory?: string; sort?: string }>;
 export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {
@@ -25,7 +25,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
     <div className="section-wrap page-section">
       <div className="page-intro shop-intro">
         <div>
-          <span className="eyebrow">FASHION · COLLECTIBLES · SCHOOL · HOME</span>
+          <span className="eyebrow">CURRENTLY PUBLISHED BY NEXTVO</span>
           <h1>Shop all.</h1>
           <p>Search the current catalog by product, brand, keyword or department.</p>
         </div>

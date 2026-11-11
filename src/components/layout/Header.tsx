@@ -1,69 +1,79 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ShoppingBag, UserRound } from "lucide-react";
+import type { Category } from "@/types/category";
 import { useCart } from "@/context/CartContext";
-import { useAuth } from "@/context/AuthContext";
-import { useWishlist } from "@/context/WishlistContext";
 import { Navigation } from "@/components/layout/Navigation";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { StoreLogo } from "@/components/layout/Logo";
 import { HeaderSearch } from "@/components/layout/HeaderSearch";
 
-export function SiteHeader() {
+export function SiteHeader({ categories }: { categories: Category[] }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const { itemCount } = useCart();
-  const { count: wishlistCount } = useWishlist();
-  const { user } = useAuth();
+
   useEffect(() => {
     if (!menuOpen) return;
+    const drawer = document.getElementById("navigation-drawer");
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.requestAnimationFrame(() => drawer?.querySelector<HTMLElement>(".drawer-close")?.focus());
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMenuOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !drawer) return;
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), summary, input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      triggerRef.current?.focus({ preventScroll: true });
+    };
   }, [menuOpen]);
+
   return (
-    <header className="site-header">
-      <div className="header-main">
-        <MobileMenu open={menuOpen} onToggle={() => setMenuOpen((open) => !open)} />
+    <header className="site-header app-site-header">
+      <div className="header-main app-header-main">
+        <MobileMenu buttonRef={triggerRef} open={menuOpen} onToggle={() => setMenuOpen((open) => !open)} />
         <StoreLogo />
-        <HeaderSearch />
-        <div className="header-actions">
-          <Link
-            className="header-action-link"
-            href="/wishlist"
-            aria-label={`Wishlist, ${wishlistCount} saved items`}
-          >
-            <Heart size={20} strokeWidth={1.8} />
-            <span>Wishlist</span>
-            {wishlistCount > 0 && <b className="bag-count">{wishlistCount}</b>}
-          </Link>
-          <Link
-            className="header-action-link"
-            href={user ? "/account" : "/login"}
-            aria-label={user ? "Your account" : "Sign in to your account"}
-          >
+        <div className="app-header-search">
+          <HeaderSearch />
+        </div>
+        <div className="header-actions app-header-actions">
+          <Link className="header-action-link app-header-me" href="/account" aria-label="Me and my account">
             <UserRound size={20} strokeWidth={1.8} />
-            <span>{user ? "Account" : "Sign in"}</span>
+            <span>Me</span>
           </Link>
-          <Link className="bag-link" href="/cart" aria-label={`Shopping bag, ${itemCount} items`}>
+          <Link className="bag-link app-header-cart" href="/cart" aria-label={`Cart, ${itemCount} items`}>
             <ShoppingBag size={21} strokeWidth={1.8} />
-            <span>Bag</span>
-            {itemCount > 0 && <b className="bag-count">{itemCount}</b>}
+            <span>Cart</span>
+            {itemCount > 0 && <b className="bag-count">{itemCount > 99 ? "99+" : itemCount}</b>}
           </Link>
         </div>
       </div>
-      {menuOpen && (
-        <button
-          className="mobile-nav-backdrop"
-          type="button"
-          aria-label="Close navigation menu"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-      <Navigation open={menuOpen} onNavigate={() => setMenuOpen(false)} />
+      <Navigation open={menuOpen} categories={categories} onNavigate={() => setMenuOpen(false)} />
     </header>
   );
 }

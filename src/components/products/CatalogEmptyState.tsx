@@ -30,7 +30,7 @@ export function CatalogEmptyState({ state, compact = false }: { state: CatalogSt
         <p>{message.body}</p>
       </div>
       {!compact && (
-        <Link className="button button-outline" href="/categories/fashion">
+        <Link className="button button-outline" href="/explore">
           Explore departments <ArrowRight size={15} />
         </Link>
       )}

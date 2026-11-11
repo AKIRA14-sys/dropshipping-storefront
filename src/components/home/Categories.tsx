@@ -1,44 +1,65 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Category } from "@/types/category";
+import type { Product } from "@/types/product";
+import type { CatalogState } from "@/lib/products";
+import { CategoryArtwork } from "@/components/categories/CategoryArtwork";
 
-export function Categories({ categories }: { categories: Category[] }) {
+export function Categories({
+  categories,
+  products = [],
+  catalogState = "ready",
+}: {
+  categories: Category[];
+  products?: Product[];
+  catalogState?: CatalogState;
+}) {
+  if (!categories.length) return null;
   return (
-    <section className="category-section section-wrap" id="departments">
-      <div className="section-heading">
+    <section
+      className="category-discovery section-wrap"
+      id="departments"
+      aria-labelledby="department-heading"
+    >
+      <div className="section-heading app-section-heading">
         <div>
-          <span className="eyebrow">FOUR WAYS TO FIND YOUR NEXT THING</span>
-          <h2>Choose your department.</h2>
+          <span className="eyebrow">{categories.length} DEPARTMENTS TO EXPLORE</span>
+          <h2 id="department-heading">Browse by department.</h2>
         </div>
-        <Link href="/shop" className="text-link">
-          Shop all <ArrowUpRight size={15} />
+        <Link href="/explore" className="text-link">
+          Explore all <ArrowRight size={15} />
         </Link>
       </div>
-      <div className="category-grid">
-        {categories.map((category, index) => (
-          <Link
-            href={`/categories/${category.slug}`}
-            className={`category-tile category-tile-${index + 1}`}
-            key={category.slug}
-          >
-            <div className="category-image">
-              <Image src={category.image_url} alt="" fill sizes="(max-width: 640px) 50vw, 25vw" />
-            </div>
-            <div className="category-overlay">
-              <span className="category-index">0{index + 1} / DEPARTMENT</span>
-              <div>
-                <span>
-                  <strong>{category.name}</strong>
-                  <small>{category.description}</small>
-                </span>
-                <span className="round-arrow">
-                  <ArrowUpRight size={18} />
-                </span>
+      <div className="category-discovery-rail" aria-label="Store departments">
+        {categories.map((category) => {
+          const count = products.filter((product) => product.category_slug === category.slug).length;
+          const countLabel =
+            catalogState === "not-configured"
+              ? "Catalog not connected"
+              : catalogState === "unavailable"
+                ? "Catalog unavailable"
+                : count
+                  ? `${count} listed`
+                  : "No listings yet";
+          return (
+            <Link
+              href={`/categories/${category.slug}`}
+              className="department-card"
+              key={category.slug}
+              aria-label={`${category.name}, ${countLabel}`}
+            >
+              <CategoryArtwork category={category} />
+              <div className="department-card-copy">
+                <span className="department-card-count">{countLabel}</span>
+                <h3>{category.name}</h3>
+                <p>{category.description}</p>
               </div>
-            </div>
-          </Link>
-        ))}
+              <span className="department-card-arrow" aria-hidden="true">
+                <ArrowUpRight size={17} />
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
