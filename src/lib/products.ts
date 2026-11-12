@@ -71,6 +71,7 @@ export function mapProduct(row: Record<string, any>): Product | null {
     ? images.find((image) => image.image_url === imageUrl) ?? {
         id: `primary-${row.id}`,
         image_url: imageUrl,
+        card_image_url: imageUrl,
         alt_text: row.name,
         sort_order: 0,
       }
