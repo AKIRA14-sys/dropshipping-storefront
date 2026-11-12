@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 import type { Product } from "@/types/product";
 import { formatPrice } from "@/lib/utils";
 import { AddToCartButton } from "@/components/products/AddToCartButton";
 import { WishlistButton } from "@/components/products/WishlistButton";
+import { ProductCardImage } from "@/components/products/ProductCardImage";
 
 export function ProductCard({ product }: { product: Product }) {
   const comparePrice = product.variants.length === 0 ? product.compare_at_price_ngn : null;
@@ -26,10 +26,10 @@ export function ProductCard({ product }: { product: Product }) {
       >
         <div className="product-image-wrap">
           {primaryImageUrl ? (
-            <Image
+            <ProductCardImage
               src={primaryImageUrl}
+              fallbackSrc={product.card_image_url ? product.image_url : undefined}
               alt={product.name}
-              fill
               sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
               className="product-image"
             />
@@ -40,10 +40,10 @@ export function ProductCard({ product }: { product: Product }) {
             </div>
           )}
           {secondaryImage && (
-            <Image
+            <ProductCardImage
               src={secondaryImage.card_image_url || secondaryImage.image_url}
+              fallbackSrc={secondaryImage.card_image_url ? secondaryImage.image_url : undefined}
               alt={secondaryImage.alt_text || product.name}
-              fill
               sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
               className="product-image product-image-secondary"
             />
