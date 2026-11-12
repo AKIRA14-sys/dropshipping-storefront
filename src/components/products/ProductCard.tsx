@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ImageOff } from "lucide-react";
 import type { Product } from "@/types/product";
 import { formatPrice } from "@/lib/utils";
 import { AddToCartButton } from "@/components/products/AddToCartButton";
@@ -33,7 +33,10 @@ export function ProductCard({ product }: { product: Product }) {
               className="product-image"
             />
           ) : (
-            <div className="product-image-placeholder" aria-label="Product image unavailable" />
+            <div className="product-image-placeholder" role="img" aria-label="No product image available">
+              <ImageOff size={30} aria-hidden="true" />
+              <span>Image coming soon</span>
+            </div>
           )}
           {secondaryImage && (
             <Image

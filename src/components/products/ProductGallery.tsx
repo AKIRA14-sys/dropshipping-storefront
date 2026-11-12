@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type TouchEvent } from "react";
-import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff, Maximize2, X } from "lucide-react";
 import type { Product } from "@/types/product";
 
 export function ProductGallery({ product }: { product: Product }) {
@@ -73,7 +73,12 @@ export function ProductGallery({ product }: { product: Product }) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [zoomOpen, images.length, activeIndex]);
 
-  if (!image) return <div className="detail-gallery-empty">Product images will appear here.</div>;
+  if (!image) return (
+    <div className="detail-gallery-empty" role="img" aria-label={`No product image available for ${product.name}`}>
+      <ImageOff size={34} aria-hidden="true" />
+      <span>Product image coming soon</span>
+    </div>
+  );
   return (
     <div className="product-gallery">
       <div className="detail-image" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>

@@ -36,14 +36,17 @@ export function mapProduct(row: Record<string, any>): Product | null {
     }))
     .sort((a: ProductImage, b: ProductImage) => a.sort_order - b.sort_order);
   const imageUrl = row.image_url || images[0]?.image_url || null;
-  if (!imageUrl) return null;
-  const primaryImage = images.find((image) => image.image_url === imageUrl) ?? {
-    id: `primary-${row.id}`,
-    image_url: imageUrl,
-    alt_text: row.name,
-    sort_order: 0,
-  };
-  const displayImages = [primaryImage, ...images.filter((image) => image.image_url !== imageUrl)];
+  const primaryImage = imageUrl
+    ? images.find((image) => image.image_url === imageUrl) ?? {
+        id: `primary-${row.id}`,
+        image_url: imageUrl,
+        alt_text: row.name,
+        sort_order: 0,
+      }
+    : null;
+  const displayImages = primaryImage
+    ? [primaryImage, ...images.filter((image) => image.image_url !== imageUrl)]
+    : [];
   const rawSubcategory = firstRelation(row.subcategories);
   const subcategory = rawSubcategory?.active === true ? rawSubcategory : undefined;
   const variants: ProductVariant[] = (Array.isArray(row.product_variants) ? row.product_variants : [])

@@ -5251,6 +5251,50 @@ textarea {
 .product-image {
   object-fit: cover;
 }
+.product-image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: radial-gradient(circle at 50% 42%, rgba(91, 151, 231, 0.16), transparent 44%),
+    linear-gradient(155deg, #202b3d, #141b28);
+  color: #9aabc2;
+  text-align: center;
+}
+.product-image-placeholder svg {
+  color: #8bbfff;
+  opacity: 0.88;
+}
+.product-image-placeholder span {
+  font-size: 10px;
+  letter-spacing: 0.035em;
+}
+.detail-gallery-empty {
+  display: flex;
+  aspect-ratio: 1.05;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid rgba(202, 217, 240, 0.13);
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 42%, rgba(91, 151, 231, 0.16), transparent 45%),
+    linear-gradient(155deg, #202b3d, #141b28);
+  color: #9aabc2;
+  text-align: center;
+}
+.detail-gallery-empty svg {
+  color: #8bbfff;
+}
+.detail-gallery-empty span {
+  font-size: 12px;
+  letter-spacing: 0.035em;
+}
 .product-card-copy {
   padding: 11px 12px 13px;
 }
