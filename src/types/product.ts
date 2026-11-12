@@ -5,6 +5,7 @@ export type ProductAttributes = Record<string, string | number | boolean | strin
 export interface ProductImage {
   id: string;
   image_url: string;
+  card_image_url?: string | null;
   alt_text: string;
   sort_order: number;
 }
@@ -34,6 +35,7 @@ export interface Product {
   subcategory_slug: string | null;
   subcategory_name: string | null;
   image_url: string | null;
+  card_image_url?: string | null;
   images: ProductImage[];
   variants: ProductVariant[];
   attributes: ProductAttributes;

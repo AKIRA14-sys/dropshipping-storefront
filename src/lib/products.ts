@@ -9,6 +9,23 @@ export interface CatalogResult {
   products: Product[];
 }
 
+function isGeneratedCardImageUrl(value: unknown): boolean {
+  if (typeof value !== "string") return false;
+  try {
+    return /-nextvo-card\.(?:jpe?g|png|webp|avif)$/i.test(new URL(value).pathname);
+  } catch {
+    return false;
+  }
+}
+
+function productImagePairKey(value: string): string | null {
+  try {
+    return new URL(value).pathname.match(/^(.*)-(?:original|nextvo-card)\.(?:jpe?g|png|webp|avif)$/i)?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 const PRODUCT_SELECT =
   "id, category_id, subcategory_id, slug, name, description, brand, price_ngn, compare_at_price_ngn, currency_code, image_url, stock_quantity, featured, is_new_arrival, active, attributes, search_terms, created_at, categories!inner(slug,name,active), subcategories(slug,name,active), product_images(id,image_url,alt_text,sort_order), product_variants(id,label,sku,options,price_ngn,stock_quantity,active)";
 
@@ -26,7 +43,7 @@ export function mapProduct(row: Record<string, any>): Product | null {
   )
     return null;
   const rawImages = Array.isArray(row.product_images) ? row.product_images : [];
-  const images: ProductImage[] = rawImages
+  const storedImages: ProductImage[] = rawImages
     .filter((image: any) => typeof image.image_url === "string" && image.image_url.length > 0)
     .map((image: any) => ({
       id: String(image.id),
@@ -35,7 +52,21 @@ export function mapProduct(row: Record<string, any>): Product | null {
       sort_order: Number(image.sort_order ?? 0),
     }))
     .sort((a: ProductImage, b: ProductImage) => a.sort_order - b.sort_order);
-  const imageUrl = row.image_url || images[0]?.image_url || null;
+  const cardImagesByKey = new Map<string, string>();
+  for (const image of storedImages) {
+    if (!isGeneratedCardImageUrl(image.image_url)) continue;
+    const key = productImagePairKey(image.image_url);
+    if (key) cardImagesByKey.set(key, image.image_url);
+  }
+  const images: ProductImage[] = storedImages
+    .filter((image) => !isGeneratedCardImageUrl(image.image_url))
+    .map((image) => {
+      const key = productImagePairKey(image.image_url);
+      return { ...image, card_image_url: key ? cardImagesByKey.get(key) ?? null : null };
+    });
+  const requestedCardImageUrl = isGeneratedCardImageUrl(row.image_url) ? String(row.image_url) : null;
+  const cardSourceImage = requestedCardImageUrl ? images.find((image) => image.card_image_url === requestedCardImageUrl) : undefined;
+  const imageUrl = requestedCardImageUrl ? cardSourceImage?.image_url || images[0]?.image_url || null : row.image_url || images[0]?.image_url || null;
   const primaryImage = imageUrl
     ? images.find((image) => image.image_url === imageUrl) ?? {
         id: `primary-${row.id}`,
@@ -44,9 +75,10 @@ export function mapProduct(row: Record<string, any>): Product | null {
         sort_order: 0,
       }
     : null;
+  const cardImageUrl = requestedCardImageUrl || primaryImage?.card_image_url || null;
   const displayImages = primaryImage
     ? [primaryImage, ...images.filter((image) => image.image_url !== imageUrl)]
-    : [];
+    : images;
   const rawSubcategory = firstRelation(row.subcategories);
   const subcategory = rawSubcategory?.active === true ? rawSubcategory : undefined;
   const variants: ProductVariant[] = (Array.isArray(row.product_variants) ? row.product_variants : [])
@@ -79,6 +111,7 @@ export function mapProduct(row: Record<string, any>): Product | null {
     subcategory_slug: subcategory?.slug ?? null,
     subcategory_name: subcategory?.name ?? null,
     image_url: imageUrl,
+    card_image_url: cardImageUrl,
     images: displayImages,
     variants,
     attributes: row.attributes && typeof row.attributes === "object" ? row.attributes : {},

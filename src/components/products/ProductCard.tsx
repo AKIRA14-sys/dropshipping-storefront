@@ -15,7 +15,8 @@ export function ProductCard({ product }: { product: Product }) {
     : product.stock_quantity > 0;
   const variantPrices = product.variants.map((variant) => variant.price_ngn ?? product.price_ngn);
   const displayPrice = product.variants.length ? Math.min(...variantPrices) : product.price_ngn;
-  const secondaryImage = product.images.find((image) => image.image_url !== product.image_url);
+  const secondaryImage = product.images[1];
+  const primaryImageUrl = product.card_image_url || product.image_url;
   return (
     <article className="product-card">
       <Link
@@ -24,9 +25,9 @@ export function ProductCard({ product }: { product: Product }) {
         aria-label={`View ${product.name}`}
       >
         <div className="product-image-wrap">
-          {product.image_url ? (
+          {primaryImageUrl ? (
             <Image
-              src={product.image_url}
+              src={primaryImageUrl}
               alt={product.name}
               fill
               sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"
@@ -40,7 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
           )}
           {secondaryImage && (
             <Image
-              src={secondaryImage.image_url}
+              src={secondaryImage.card_image_url || secondaryImage.image_url}
               alt={secondaryImage.alt_text || product.name}
               fill
               sizes="(max-width: 640px) 48vw, (max-width: 1024px) 30vw, 22vw"

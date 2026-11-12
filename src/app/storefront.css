@@ -6628,3 +6628,11 @@ textarea {
     transition: none !important;
   }
 }
+
+/* Product cards use one proportional 4:3 frame across desktop, mobile and catalogue rails. */
+.product-image-wrap,
+.catalogue .product-image-wrap,
+.spotlight-rail .product-image-wrap {
+  height: auto;
+  aspect-ratio: 4 / 3;
+}

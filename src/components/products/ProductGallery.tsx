@@ -6,10 +6,11 @@ import { ChevronLeft, ChevronRight, ImageOff, Maximize2, X } from "lucide-react"
 import type { Product } from "@/types/product";
 
 export function ProductGallery({ product }: { product: Product }) {
+  const galleryFallbackUrl = product.image_url && product.image_url !== product.card_image_url ? product.image_url : null;
   const images = product.images.length
     ? product.images
-    : product.image_url
-      ? [{ id: product.id, image_url: product.image_url, alt_text: product.name, sort_order: 0 }]
+    : galleryFallbackUrl
+      ? [{ id: product.id, image_url: galleryFallbackUrl, alt_text: product.name, sort_order: 0 }]
       : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
