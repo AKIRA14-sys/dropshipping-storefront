@@ -9,7 +9,7 @@ import { ProductPurchasePanel } from "@/components/products/ProductPurchasePanel
 import { RecentlyViewed } from "@/components/products/RecentlyViewed";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { productJsonLd } from "@/lib/seo";
-import type { Product } from "@/types/product";
+import type { Product, ProductAttributeValue } from "@/types/product";
 
 type Params = Promise<{ slug: string }>;
 
@@ -34,19 +34,46 @@ function attributeLabel(value: string) {
   return value.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
+const structuredAttributeKeys = new Set(["short_description", "key_features", "specifications"]);
+
+function renderAttributeValue(value: ProductAttributeValue): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string") return value.trim() || null;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) {
+    const items = value.filter((item): item is string => typeof item === "string").map((item) => item.trim()).filter(Boolean);
+    return items.length ? items.join(", ") : null;
+  }
+  if (typeof value === "object" && "value" in value && "unit" in value) {
+    const measurement = value as { value?: unknown; unit?: unknown };
+    if (typeof measurement.value === "number" && typeof measurement.unit === "string" && measurement.unit.trim()) {
+      return `${measurement.value} ${measurement.unit.trim()}`;
+    }
+  }
+  return null;
+}
+
 function AttributeList({ product }: { product: Product }) {
-  const entries = Object.entries(product.attributes).filter(
-    ([, value]) => value !== null && value !== undefined && String(value).length > 0,
-  );
-  if (!entries.length) return null;
+  const attributes = product.attributes ?? {};
+  const specs = attributes.specifications && typeof attributes.specifications === "object" && !Array.isArray(attributes.specifications)
+    ? Object.entries(attributes.specifications).flatMap(([key, value]) => {
+        const rendered = renderAttributeValue(value);
+        return rendered ? [[key, rendered] as const] : [];
+      })
+    : [];
+  const entries = Object.entries(attributes).filter(([key]) => !structuredAttributeKeys.has(key)).flatMap(([key, value]) => {
+    const rendered = renderAttributeValue(value);
+    return rendered ? [[key, rendered] as const] : [];
+  });
+  if (!specs.length && !entries.length) return null;
   return (
     <section className="product-specifications">
       <h2>Product details</h2>
       <dl>
-        {entries.map(([key, value]) => (
+        {[...specs, ...entries].map(([key, value]) => (
           <div key={key}>
             <dt>{attributeLabel(key)}</dt>
-            <dd>{Array.isArray(value) ? value.join(", ") : String(value)}</dd>
+            <dd>{value}</dd>
           </div>
         ))}
       </dl>
@@ -90,6 +117,16 @@ export default async function ProductPage({ params }: { params: Params }) {
             {product.brand && <p className="detail-brand">{product.brand}</p>}
             <h1>{product.name}</h1>
             <p className="detail-description">{product.description}</p>
+            {typeof product.attributes?.short_description === "string" && product.attributes.short_description.trim() && (
+              <p className="detail-description">{product.attributes.short_description.trim()}</p>
+            )}
+            {Array.isArray(product.attributes?.key_features) && product.attributes.key_features.some((feature) => typeof feature === "string" && feature.trim()) && (
+              <ul className="product-key-features">
+                {product.attributes.key_features
+                  .filter((feature): feature is string => typeof feature === "string" && Boolean(feature.trim()))
+                  .map((feature, index) => <li key={`${index}-${feature}`}>{feature.trim()}</li>)}
+              </ul>
+            )}
             <ProductPurchasePanel product={product} />
             {category && (
               <p className="detail-category-link">
