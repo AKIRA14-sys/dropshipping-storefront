@@ -1,6 +1,25 @@
 import type { CategorySlug } from "@/types/category";
 
-export type ProductAttributes = Record<string, string | number | boolean | string[]>;
+export interface ProductMeasurement {
+  value: number;
+  unit: string;
+}
+
+export interface ProductAttributeObject {
+  [key: string]: ProductAttributeValue | null | undefined;
+}
+
+export type ProductAttributeValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | ProductMeasurement
+  | ProductAttributeObject
+  | null
+  | undefined;
+
+export type ProductAttributes = Record<string, ProductAttributeValue>;
 
 export interface ProductImage {
   id: string;
