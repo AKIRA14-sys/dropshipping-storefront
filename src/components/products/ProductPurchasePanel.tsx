@@ -129,7 +129,12 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
             <ShoppingBag size={16} /> Choose an option
           </button>
         ) : (
-          <AddToCartButton product={product} selectedVariant={selectedVariant} quantity={quantity} />
+          <AddToCartButton
+            product={product}
+            selectedVariant={selectedVariant}
+            quantity={quantity}
+            actionLabel="Add to Cart"
+          />
         )}
         <button
           type="button"

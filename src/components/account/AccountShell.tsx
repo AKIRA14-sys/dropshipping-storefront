@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ArrowRight, MapPin, Package, UserRound } from "lucide-react";
+import { ChevronRight, LogOut, MapPin, Package, UserRound } from "lucide-react";
 import { AccountGate } from "@/components/auth/AuthForms";
 import { useAuth } from "@/context/AuthContext";
 
@@ -60,19 +60,39 @@ export function AccountShell({
       <AccountGate returnTo={path}>
         <div className="account-layout">
           <nav className="account-nav" aria-label="Account navigation">
-            {links.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link key={item.href} className={active === item.href ? "active" : ""} href={item.href}>
-                  <Icon size={17} />
-                  {item.label}
-                </Link>
-              );
-            })}
-            <button type="button" onClick={logout} disabled={busy}>
-              <ArrowRight size={17} />
-              {busy ? "Signing out…" : "Sign out"}
-            </button>
+            <div className="account-nav-group">
+              <span className="account-nav-heading">Your account</span>
+              <div className="account-nav-links">
+                {links.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = active === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      className={isActive ? "active" : ""}
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      <span className="account-nav-item-main">
+                        <Icon size={17} aria-hidden="true" />
+                        <span>{item.label}</span>
+                      </span>
+                      <ChevronRight size={16} aria-hidden="true" />
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="account-nav-group account-nav-session">
+              <span className="account-nav-heading">Session</span>
+              <button type="button" onClick={logout} disabled={busy}>
+                <span className="account-nav-item-main">
+                  <LogOut size={17} aria-hidden="true" />
+                  <span>{busy ? "Signing out…" : "Sign out"}</span>
+                </span>
+                <ChevronRight size={16} aria-hidden="true" />
+              </button>
+            </div>
             {error && (
               <p className="form-error" role="alert">
                 {error}
