@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/types/product";
 import { ProductGrid } from "@/components/products/ProductGrid";
+import { HomeProductCarousel } from "@/components/home/HomeProductCarousel";
 
 export function FeaturedProducts({ products }: { products: Product[] }) {
   if (!products.length) return null;
@@ -17,7 +18,13 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
             View all products <ArrowUpRight size={15} />
           </Link>
         </div>
-        <ProductGrid products={products} className="app-product-grid" />
+        <HomeProductCarousel ariaLabel="Featured products">
+          <ProductGrid
+            products={products}
+            className="app-product-grid home-carousel-product-grid"
+            showPurchaseAction={false}
+          />
+        </HomeProductCarousel>
       </div>
     </section>
   );

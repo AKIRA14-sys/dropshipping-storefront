@@ -38,6 +38,7 @@ const destinations = [
 export function MobileBottomNav() {
   const pathname = usePathname();
   const { itemCount } = useCart();
+  if (pathname.startsWith("/products/")) return null;
   return (
     <nav className="mobile-bottom-nav" aria-label="Primary">
       {destinations.map((destination) => {

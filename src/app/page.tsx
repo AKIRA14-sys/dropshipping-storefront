@@ -45,16 +45,22 @@ export default async function HomePage() {
   ]);
   const spotlight = uniqueDepartmentSpotlight(bestSellers, featured);
   return (
-    <>
+    <div className="nextvo-home">
       <ScrollReveal>
         <Hero
           products={spotlight}
+          categories={categories}
           catalogState={catalog.state}
           spotlightLabel={bestSellers.length ? "POPULAR WITH SHOPPERS · PAID SALES" : "FEATURED BY THE STORE"}
         />
       </ScrollReveal>
       <ScrollReveal>
-        <Categories categories={categories} products={catalog.products} catalogState={catalog.state} />
+        <Categories
+          categories={categories}
+          products={catalog.products}
+          catalogState={catalog.state}
+          variant="home-tiles"
+        />
       </ScrollReveal>
       <ScrollReveal>
         <FeaturedProducts products={featured} />
@@ -69,6 +75,7 @@ export default async function HomePage() {
           products={arrivals}
           href="/new-arrivals"
           linkLabel="See all new arrivals"
+          variant="carousel"
         />
       </ScrollReveal>
       <ScrollReveal>
@@ -83,6 +90,6 @@ export default async function HomePage() {
       <ScrollReveal>
         <DepartmentSpotlight categories={categories} products={catalog.products} />
       </ScrollReveal>
-    </>
+    </div>
   );
 }

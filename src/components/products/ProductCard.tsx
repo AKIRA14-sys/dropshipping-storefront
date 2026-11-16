@@ -6,7 +6,13 @@ import { AddToCartButton } from "@/components/products/AddToCartButton";
 import { WishlistButton } from "@/components/products/WishlistButton";
 import { ProductCardImage } from "@/components/products/ProductCardImage";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  showPurchaseAction = true,
+}: {
+  product: Product;
+  showPurchaseAction?: boolean;
+}) {
   const comparePrice = product.variants.length === 0 ? product.compare_at_price_ngn : null;
   const onSale = comparePrice !== null && comparePrice > product.price_ngn;
   const discount = onSale ? Math.round((1 - product.price_ngn / comparePrice) * 100) : 0;
@@ -72,13 +78,14 @@ export function ProductCard({ product }: { product: Product }) {
           </strong>
           {onSale && <del>{formatPrice(comparePrice, product.currency_code)}</del>}
         </div>
-        {product.variants.length ? (
-          <Link href={`/products/${product.slug}`} className="button button-outline product-options-link">
-            Choose options <ArrowUpRight size={14} />
-          </Link>
-        ) : (
-          <AddToCartButton product={product} compact />
-        )}
+        {showPurchaseAction &&
+          (product.variants.length ? (
+            <Link href={`/products/${product.slug}`} className="button button-outline product-options-link">
+              Choose options <ArrowUpRight size={14} />
+            </Link>
+          ) : (
+            <AddToCartButton product={product} compact />
+          ))}
       </div>
     </article>
   );

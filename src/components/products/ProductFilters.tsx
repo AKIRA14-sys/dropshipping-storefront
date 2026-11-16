@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import type { Category } from "@/types/category";
@@ -431,9 +430,6 @@ export function ShopBrowser({
             </button>
           </div>
         )}
-        <div className="catalogue-help">
-          Need a hand? <Link href="/contact">Contact the store</Link>
-        </div>
       </section>
     </div>
   );

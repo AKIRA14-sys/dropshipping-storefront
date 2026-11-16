@@ -86,15 +86,23 @@ export default async function ProductPage({ params }: { params: Params }) {
   const catalog = await getCatalog();
   const product = catalog.products.find((item) => item.slug === slug);
   if (!product) notFound();
+  const descriptionAvailable = Boolean(product.description.trim());
+  const shortDescription =
+    typeof product.attributes?.short_description === "string" ? product.attributes.short_description.trim() : "";
+  const keyFeatures = Array.isArray(product.attributes?.key_features)
+    ? product.attributes.key_features
+        .filter((feature): feature is string => typeof feature === "string" && Boolean(feature.trim()))
+        .map((feature) => feature.trim())
+    : [];
   const category = getStaticCategory(product.category_slug);
   const related = catalog.products
     .filter((item) => item.category_slug === product.category_slug && item.id !== product.id)
     .slice(0, 4);
   const jsonLd = productJsonLd(product);
   return (
-    <>
-      <div className="section-wrap product-detail-page">
-        <div className="product-breadcrumbs">
+    <div className="app-product-route">
+      <div className="section-wrap product-detail-page app-product-detail-page">
+        <nav className="product-breadcrumbs" aria-label="Breadcrumb">
           <Link href="/shop">
             <ArrowLeft size={15} /> Shop
           </Link>
@@ -106,7 +114,7 @@ export default async function ProductPage({ params }: { params: Params }) {
               <span>{product.subcategory_name}</span>
             </>
           )}
-        </div>
+        </nav>
         <div className="product-detail">
           <ProductGallery product={product} />
           <div className="detail-copy">
@@ -116,17 +124,6 @@ export default async function ProductPage({ params }: { params: Params }) {
             </span>
             {product.brand && <p className="detail-brand">{product.brand}</p>}
             <h1>{product.name}</h1>
-            <p className="detail-description">{product.description}</p>
-            {typeof product.attributes?.short_description === "string" && product.attributes.short_description.trim() && (
-              <p className="detail-description">{product.attributes.short_description.trim()}</p>
-            )}
-            {Array.isArray(product.attributes?.key_features) && product.attributes.key_features.some((feature) => typeof feature === "string" && feature.trim()) && (
-              <ul className="product-key-features">
-                {product.attributes.key_features
-                  .filter((feature): feature is string => typeof feature === "string" && Boolean(feature.trim()))
-                  .map((feature, index) => <li key={`${index}-${feature}`}>{feature.trim()}</li>)}
-              </ul>
-            )}
             <ProductPurchasePanel product={product} />
             {category && (
               <p className="detail-category-link">
@@ -135,6 +132,18 @@ export default async function ProductPage({ params }: { params: Params }) {
             )}
           </div>
         </div>
+        {(descriptionAvailable || shortDescription || keyFeatures.length > 0) && (
+          <section className="product-description-section" aria-labelledby="product-description-heading">
+            <h2 id="product-description-heading">Product description</h2>
+            {descriptionAvailable && <p className="detail-description">{product.description}</p>}
+            {shortDescription && <p className="detail-description">{shortDescription}</p>}
+            {keyFeatures.length > 0 && (
+              <ul className="product-key-features">
+                {keyFeatures.map((feature, index) => <li key={`${index}-${feature}`}>{feature}</li>)}
+              </ul>
+            )}
+          </section>
+        )}
         <AttributeList product={product} />
         {related.length > 0 && (
           <section className="related-products">
@@ -153,6 +162,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         />
       </div>
       <RecentlyViewed currentProduct={product} />
-    </>
+    </div>
   );
 }

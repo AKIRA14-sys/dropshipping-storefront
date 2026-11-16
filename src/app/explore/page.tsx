@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Search, Sparkles } from "lucide-react";
 import { Categories } from "@/components/home/Categories";
 import { ShopBrowser } from "@/components/products/ProductFilters";
@@ -11,10 +12,43 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-type SearchParams = Promise<{ q?: string; category?: string; subcategory?: string; sort?: string }>;
-export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
-  const [params, catalog, categories, bestSellers] = await Promise.all([
-    searchParams,
+type ExploreParams = { q?: string; category?: string; subcategory?: string; sort?: string };
+type SearchParams = Promise<ExploreParams>;
+
+function ExploreHero({ query }: { query: string }) {
+  return (
+    <header className="explore-hero section-wrap">
+      <span className="eyebrow">
+        <Sparkles size={14} /> EXPLORE THE STORE
+      </span>
+      <h1>Discover what’s next.</h1>
+      <p>
+        Search live listings or browse departments. Product details are shown only when published by the
+        store.
+      </p>
+      <form className="explore-search" action="/search" role="search">
+        <Search size={20} aria-hidden="true" />
+        <input
+          name="q"
+          type="search"
+          defaultValue={query}
+          placeholder="Search products, brands or keywords"
+          aria-label="Search products, brands or keywords"
+        />
+        <button type="submit">Search</button>
+      </form>
+      <div className="explore-quick-links" aria-label="Quick browse">
+        <a href="#departments">Browse departments</a>
+        <a href="#current-listings">Current listings</a>
+        <a href="/new-arrivals">New arrivals</a>
+        <a href="/offers">Offers</a>
+      </div>
+    </header>
+  );
+}
+
+async function ExploreResults({ params }: { params: ExploreParams }) {
+  const [catalog, categories, bestSellers] = await Promise.all([
     getCatalog(),
     getCategories(),
     getBestSellers(50),
@@ -24,35 +58,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
     ...product,
     paid_units_sold: sales.get(product.id) ?? 0,
   }));
+
   return (
-    <div className="explore-page">
-      <header className="explore-hero section-wrap">
-        <span className="eyebrow">
-          <Sparkles size={14} /> EXPLORE THE STORE
-        </span>
-        <h1>Discover what’s next.</h1>
-        <p>
-          Search live listings or browse departments. Product details are shown only when published by the
-          store.
-        </p>
-        <form className="explore-search" action="/search" role="search">
-          <Search size={20} aria-hidden="true" />
-          <input
-            name="q"
-            type="search"
-            defaultValue={params.q || ""}
-            placeholder="Search products, brands or keywords"
-            aria-label="Search products, brands or keywords"
-          />
-          <button type="submit">Search</button>
-        </form>
-        <div className="explore-quick-links" aria-label="Quick browse">
-          <a href="#departments">Browse departments</a>
-          <a href="#current-listings">Current listings</a>
-          <a href="/new-arrivals">New arrivals</a>
-          <a href="/offers">Offers</a>
-        </div>
-      </header>
+    <>
       <Categories categories={categories} products={catalog.products} catalogState={catalog.state} />
       <section id="current-listings" className="section-wrap explore-listings">
         <div className="section-heading app-section-heading">
@@ -71,6 +79,28 @@ export default async function ExplorePage({ searchParams }: { searchParams: Sear
           initialSort={params.sort || "featured"}
         />
       </section>
+    </>
+  );
+}
+
+function ExploreResultsLoading() {
+  return (
+    <div className="section-wrap explore-loading" role="status" aria-live="polite" aria-busy="true">
+      <span className="explore-loading-ring" aria-hidden="true" />
+      <span>Loading live listings and departments…</span>
+    </div>
+  );
+}
+
+export default async function ExplorePage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+
+  return (
+    <div className="explore-page">
+      <ExploreHero query={params.q || ""} />
+      <Suspense fallback={<ExploreResultsLoading />}>
+        <ExploreResults params={params} />
+      </Suspense>
     </div>
   );
 }

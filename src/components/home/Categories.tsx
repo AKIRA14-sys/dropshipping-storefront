@@ -9,12 +9,15 @@ export function Categories({
   categories,
   products = [],
   catalogState = "ready",
+  variant = "default",
 }: {
   categories: Category[];
   products?: Product[];
   catalogState?: CatalogState;
+  variant?: "default" | "home-tiles";
 }) {
   if (!categories.length) return null;
+  const isHomeTiles = variant === "home-tiles";
   return (
     <section
       className="category-discovery section-wrap"
@@ -30,7 +33,10 @@ export function Categories({
           Explore all <ArrowRight size={15} />
         </Link>
       </div>
-      <div className="category-discovery-rail" aria-label="Store departments">
+      <div
+        className={`category-discovery-grid${isHomeTiles ? " home-category-tiles" : ""}`}
+        aria-label="Store departments"
+      >
         {categories.map((category) => {
           const count = products.filter((product) => product.category_slug === category.slug).length;
           const countLabel =
@@ -44,19 +50,31 @@ export function Categories({
           return (
             <Link
               href={`/categories/${category.slug}`}
-              className="department-card"
+              className={`department-card${isHomeTiles ? " home-department-tile" : ""}`}
               key={category.slug}
               aria-label={`${category.name}, ${countLabel}`}
             >
-              <CategoryArtwork category={category} />
-              <div className="department-card-copy">
-                <span className="department-card-count">{countLabel}</span>
-                <h3>{category.name}</h3>
-                <p>{category.description}</p>
+              <CategoryArtwork
+                category={category}
+                sizes={isHomeTiles ? "(max-width: 760px) 22vw, 12vw" : "(max-width: 700px) 46vw, 22vw"}
+                className={isHomeTiles ? "home-department-artwork" : ""}
+              />
+              <div className={`department-card-copy${isHomeTiles ? " home-department-tile-copy" : ""}`}>
+                {isHomeTiles ? (
+                  <h3>{category.name}</h3>
+                ) : (
+                  <>
+                    <span className="department-card-count">{countLabel}</span>
+                    <h3>{category.name}</h3>
+                    <p>{category.description}</p>
+                  </>
+                )}
               </div>
-              <span className="department-card-arrow" aria-hidden="true">
-                <ArrowUpRight size={17} />
-              </span>
+              {!isHomeTiles && (
+                <span className="department-card-arrow" aria-hidden="true">
+                  <ArrowUpRight size={17} />
+                </span>
+              )}
             </Link>
           );
         })}

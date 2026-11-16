@@ -88,6 +88,23 @@ export function AccountOverview() {
 
   return (
     <div className="account-panel-stack">
+      <section className="account-panel account-quick-links">
+        <div className="account-panel-heading">
+          <h2>Quick links</h2>
+        </div>
+        <div className="account-shortcuts">
+          <Link href="/account/orders">
+            <Package size={18} /> Order history <ArrowRight size={15} />
+          </Link>
+          <Link href="/account/addresses">
+            <MapPin size={18} /> Saved addresses <ArrowRight size={15} />
+          </Link>
+          <Link href="/cart?view=saved">
+            <Heart size={18} /> Wishlist <ArrowRight size={15} />
+          </Link>
+        </div>
+      </section>
+      <div className="account-section-label">Account settings</div>
       <section className="account-panel">
         <div className="account-panel-heading">
           <h2>Profile details</h2>
@@ -165,17 +182,6 @@ export function AccountOverview() {
           {error || message}
         </p>
       )}
-      <div className="account-shortcuts">
-        <Link href="/account/orders">
-          <Package size={18} /> Order history <ArrowRight size={15} />
-        </Link>
-        <Link href="/account/addresses">
-          <MapPin size={18} /> Saved addresses <ArrowRight size={15} />
-        </Link>
-        <Link href="/cart?view=saved">
-          <Heart size={18} /> Wishlist <ArrowRight size={15} />
-        </Link>
-      </div>
     </div>
   );
 }

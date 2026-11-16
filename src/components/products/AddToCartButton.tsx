@@ -11,11 +11,13 @@ export function AddToCartButton({
   compact = false,
   selectedVariant = null,
   quantity = 1,
+  actionLabel = "Add to bag",
 }: {
   product: Product;
   compact?: boolean;
   selectedVariant?: ProductVariant | null;
   quantity?: number;
+  actionLabel?: string;
 }) {
   const { addItem, verification } = useCart();
   const [added, setAdded] = useState(false);
@@ -44,7 +46,7 @@ export function AddToCartButton({
         ? "Checking availability…"
         : verification !== "verified"
           ? "Availability unavailable"
-          : "Add to bag";
+          : actionLabel;
   async function handleAdd() {
     if (disabled) return;
     setPending(true);
@@ -77,7 +79,7 @@ export function AddToCartButton({
           label
         ) : verification === "verified" && !pending ? (
           <>
-            <ShoppingBag size={16} /> Add to bag
+            <ShoppingBag size={16} /> {actionLabel}
           </>
         ) : (
           label
