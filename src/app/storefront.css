@@ -6890,7 +6890,7 @@ textarea {
 .app-product-detail-page .detail-product-img {
   object-fit: contain;
   object-position: center;
-  padding: clamp(20px, 4vw, 42px);
+  padding: 8px;
 }
 .app-product-detail-page .gallery-zoom,
 .app-product-detail-page .gallery-arrows button {
@@ -6925,6 +6925,9 @@ textarea {
 .app-product-detail-page .gallery-thumbnails button.active {
   border: 2px solid #7ebfff;
   box-shadow: 0 0 0 3px rgba(87, 161, 239, 0.13);
+}
+.app-product-detail-page .gallery-thumbnails img {
+  object-fit: contain;
 }
 .app-product-detail-page .detail-copy {
   max-width: none;
@@ -7293,11 +7296,8 @@ textarea {
     position: static;
   }
   .app-product-detail-page .detail-image {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     border-radius: 19px;
-  }
-  .app-product-detail-page .detail-product-img {
-    padding: 19px;
   }
   .app-product-detail-page .gallery-thumbnails button {
     width: 58px;
